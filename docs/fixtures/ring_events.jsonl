@@ -1,0 +1,10 @@
+{"event":"mode_changed","mode":"KEYS","atMs":1795000000000}
+{"event":"info","text":"Ring mode keys","atMs":1795000000001}
+{"event":"touch","kind":"HOLD_START","atMs":1795000002310,"ringTick":1200}
+{"event":"info","text":"Ring touch press t=1200","atMs":1795000002311}
+{"event":"touch","kind":"TAP","atMs":1795000002495,"ringTick":1209}
+{"event":"info","text":"Ring touch tap t=1209","atMs":1795000002496}
+{"event":"touch","kind":"HOLD_START","atMs":1795000004102,"ringTick":1290}
+{"event":"touch","kind":"HOLD_END","atMs":1795000005288,"ringTick":1349}
+{"event":"touch","kind":"TAP","atMs":1795000006011}
+{"event":"mode_changed","mode":"CLOCK","atMs":1795000009870}

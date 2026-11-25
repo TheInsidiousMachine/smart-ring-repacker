@@ -1,0 +1,4 @@
+- [ ] `tools/check_all.sh` passes (state which flags you ran)
+- [ ] Docs updated if behaviour, API or protocol changed (docs/API.md, docs/PROTOCOL.md)
+- [ ] No vendor binaries, firmware images, device addresses, tokens or personal data in the diff
+- [ ] Anything not tested on real hardware is labelled unverified

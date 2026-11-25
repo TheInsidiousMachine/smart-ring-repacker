@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Connection -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="12dp">
+
+            <View
+                android:id="@+id/statusDot"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/dot" />
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Not connected"
+                android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/connectButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connect" />
+        </LinearLayout>
+
+        <!-- Screen -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="Screen" />
+
+                <TextView
+                    android:id="@+id/screenNote"
+                    style="@style/Caption"
+                    android:paddingBottom="8dp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Text to show on the ring">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/messageInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionSend"
+                        android:inputType="text"
+                        android:maxLength="120" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sendButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Send to ring" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/saveButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Save" />
+                </LinearLayout>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/savedChips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp" />
+
+                <TextView
+                    style="@style/Caption"
+                    android:text="Tap a saved message to send it · long-press to delete" />
+
+                <TextView
+                    style="@style/Label"
+                    android:paddingTop="12dp"
+                    android:text="Brightness" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/brightnessSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:value="2"
+                    android:valueFrom="0"
+                    android:valueTo="3" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Mouse -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="Clicker" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/mouseToggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mouseOff"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Off" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mouseClicker"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Clicker" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mousePages"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Pages" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mouseMusic"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Music" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <TextView
+                    style="@style/Caption"
+                    android:text="Clicker (custom firmware): the touch pad is a mouse button: tap = click, press and hold = drag. Pair the ring with the device you point at (e.g. glasses eye tracking). Pages: scroll step. Music: tap = next track." />
+
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Heart -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="Heartbeat" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/heartSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Live heartbeat on the ring" />
+
+                <TextView
+                    style="@style/Caption"
+                    android:text="Custom firmware: the red heart LED flashes with each beat and the screen shows BPM, updated every beat. Wear the ring snug. Turns off the mouse while on." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Gesture trigger -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="Bump-bump-flick" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/gestSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Detect on the ring" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Message (blank = HI THERE)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/gestText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioGroup
+                    android:id="@+id/gestStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/gestWords" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="Word by word" />
+                    <RadioButton android:id="@+id/gestScroll" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Scroll" />
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/gestSpeedLabel"
+                    style="@style/Caption"
+                    android:text="Speed: 500 ms per step" />
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/gestSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="60"
+                    android:valueTo="1500"
+                    android:stepSize="20"
+                    android:value="500" />
+
+                <TextView
+                    android:id="@+id/gestRepsLabel"
+                    style="@style/Caption"
+                    android:text="Play 2 times" />
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/gestReps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="1"
+                    android:valueTo="5"
+                    android:stepSize="1"
+                    android:value="2" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/gestSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Send message to ring" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/gestTest"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Show the message now (screen test)" />
+
+                <TextView
+                    android:id="@+id/gestStatus"
+                    style="@style/Caption"
+                    android:text="Custom firmware (build 11): runs on the ring, works without the phone. Two fist bumps, then flick." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Recorder -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="Gesture recorder" />
+
+                <RadioGroup
+                    android:id="@+id/recLabels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <RadioButton android:id="@+id/recTarget" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="The move: bump, bump, flick" />
+                    <RadioButton android:id="@+id/recBumps" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Double bump only (no flick)" />
+                    <RadioButton android:id="@+id/recFlick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Flick only" />
+                    <RadioButton android:id="@+id/recEveryday" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Everyday motion" />
+                    <RadioButton android:id="@+id/recShake" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hand shaking (should never fire)" />
+                </RadioGroup>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/recFast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Fast sensor (always on since build 10)" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/recButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start recording" />
+
+                <TextView
+                    android:id="@+id/recStatus"
+                    style="@style/Caption"
+                    android:text="Custom firmware. Do 10 reps with a 3-second pause between them, then Stop. Saved on the phone for training." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Gestures -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/HomeCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Gestures" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/listenSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Listen" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/lastGesture"
+                    style="@style/Caption"
+                    android:text="Turn on Listen, then tap the ring." />
+
+                <LinearLayout
+                    android:id="@+id/ruleRows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp" />
+
+                <TextView
+                    style="@style/Caption"
+                    android:paddingTop="8dp"
+                    android:text="Motion gestures (fist bump ×2 → flick) need custom firmware, because stock firmware doesn't send motion data. Rules here run on tap patterns." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resetButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Reset ring (stop sensors, normal touch)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/devButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Developer tools" />
+    </LinearLayout>
+</ScrollView>

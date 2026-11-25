@@ -1,0 +1,28 @@
+# Vendor artifacts: never commit (see THIRD_PARTY.md, docs/FIRMWARE.md)
+rwfit_apk/
+firmware/*.bin
+fw/ring_app/build/
+*.apk
+*.aab
+*.jks
+*.keystore
+# Libraries extracted from the vendor app (optional, user-supplied)
+android/app/src/main/jniLibs/
+
+# Raw captures and logs are personal sensor/BLE data: keep local
+captures/
+logs/
+
+# Build outputs / local config
+android/.gradle/
+android/build/
+android/app/build/
+android/.kotlin/
+android/local.properties
+local.properties
+fw/mouse/build/
+__pycache__/
+.pytest_cache/
+*.pyc
+tools/.venv/
+.venv/

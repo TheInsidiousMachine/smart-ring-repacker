@@ -1,0 +1,32 @@
+<resources>
+    <style name="Theme.RingTestbed" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#3D7BFF</item>
+        <item name="colorSecondary">#3D7BFF</item>
+    </style>
+
+    <style name="HomeCard" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
+    </style>
+
+    <style name="Label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceSubtitle2</item>
+    </style>
+
+    <style name="Caption">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceCaption</item>
+    </style>
+</resources>
