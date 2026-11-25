@@ -10,8 +10,9 @@ API from another machine in a recorded session).
 
 ## Enable it
 
-App -> **Gestures** tab -> API card: switch it on, pick a port (default `8765`), and choose "LAN" to listen on all interfaces
-(`0.0.0.0`) or off for loopback only (`127.0.0.1`). The card shows the URLs and the bearer token. Plain HTTP and WebSocket, no TLS.
+App -> **Gestures** tab -> API card: switch it on and pick a port (default `8765`). **LAN starts off**: the server listens on loopback only
+(`127.0.0.1`, this phone). Turn LAN on to listen on all interfaces (`0.0.0.0`) so a PC or glasses on the same Wi-Fi/VPN can reach it.
+The card shows the URLs and the bearer token. Plain HTTP and WebSocket, no TLS.
 
 Known limitation: **API settings are not saved.** After the app process restarts the API is off and the next enable generates
 a new token. Read the token from the card every time.
@@ -36,7 +37,7 @@ is closed immediately with policy-violation. The token is compared in constant t
 | `POST /v1/display` | `{"text":"HELLO"}` | `{"ok":true,"text":"HELLO"}`. Shows text now: up to 5 characters static, longer scrolls. Invalid JSON is treated as empty text (still `ok`). |
 | `GET /v1/message` | | `{"text":"..","scroll":true,"msPerStep":160,"plays":1}` |
 | `POST /v1/message` | any of `text`, `scroll`, `msPerStep`, `plays` | `{"ok":true}`. Unspecified fields keep their value. The API does not range-check; the app UI offers 60..1500 ms and 1..5 plays, and the protocol clamps to 20 ms steps and 1..20 plays. `400` + `{"ok":false,"error":..}` on bad JSON. The values are saved on the phone and re-sent on every connect. |
-| `POST /v1/mode` | `{"mode":"CLOCK"}` (any of `CLOCK`, `MOUSE`, `HEART`, `KEYS`; case-insensitive) | `{"ok":true,"mode":"CLOCK"}`. `400` on an unknown name. `UNKNOWN` is accepted and sends the clock mode. |
+| `POST /v1/mode` | `{"mode":"CLOCK"}` (any of `CLOCK`, `MOUSE`, `HEART`, `KEYS`; case-insensitive) | `{"ok":true,"mode":"CLOCK"}`. `400` + `{"ok":false,"error":"Invalid mode: .."}` on an unknown name. `UNKNOWN` is accepted and sends the clock mode. |
 | `POST /v1/clock/sync` | | `{"ok":true}`. Sets the ring clock to the phone's local time. |
 | `POST /v1/find` | | `{"ok":true}`. Sends the stock "find device" command. |
 | `GET /v1/gestures` | | JSON array of Gesture Studio gestures (below). |
@@ -84,7 +85,7 @@ that happen while you are connected. Several clients can connect at once. Every 
 | `event` | Extra fields | When |
 |---|---|---|
 | `touch` | `kind` (see below), optional `ringTick` | A touch-pad edge or gesture on the ring. |
-| `mode_changed` | `mode` | The ring reports a mode (also sent when the app sets it). |
+| `mode_changed` | `mode` | The ring reported its mode (custom firmware). Setting a mode from the app or API produces this only once the ring reports back. |
 | `gesture_armed` | | On-ring bump-bump-flick detector armed. |
 | `gesture_fired` | | On-ring bump-bump-flick detector fired. |
 | `heart_beat` | `bpm` (int) | Heart mode: sent when the BPM value changes. |
@@ -110,7 +111,8 @@ The firmware's own wire names are `tap`, `press`, `release`, `right_click`, `fiv
 | `FIVE_TAPS` | five_taps | Five quick taps (toggles mouse mode). |
 | `LONG_HOLD` | long_hold | Held ~2 s outside mouse/keys mode (toggles heart mode). |
 
-So a button consumer sees `HOLD_START` then either `TAP` or `HOLD_END` for every press. `ringTick` (build 16+) is the ring's own 20 ms counter
+So a button consumer sees `HOLD_START` then either `TAP` or `HOLD_END` for every press. A client can still see a `TAP` or `HOLD_END`
+with no `HOLD_START` before it (it connected mid-press, or a notification was lost): treat a release without a press as a no-op. `ringTick` (build 16+) is the ring's own 20 ms counter
 at the edge, wrapping at 65536; use differences between edges for press duration free of BLE jitter. It is absent for older
 firmware and other rings. In `KEYS` mode only press/release edges are sent (no mode shortcuts).
 

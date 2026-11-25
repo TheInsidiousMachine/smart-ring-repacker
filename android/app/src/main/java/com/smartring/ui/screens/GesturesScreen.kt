@@ -415,6 +415,11 @@ private fun ApiCard(
             Text("LAN", modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Switch(checked = settings.lan, onCheckedChange = { onApi(settings.copy(lan = it)) })
         }
+        Text(
+            if (settings.lan) "Reachable from other devices on your Wi-Fi/VPN (token required)."
+            else "This phone only. Turn on LAN for a PC, glasses or the gaze keyboard.",
+            style = MaterialTheme.typography.bodySmall,
+        )
         OutlinedTextField(
             value = port,
             onValueChange = { port = it.filter { ch -> ch.isDigit() }.take(5) },

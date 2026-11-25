@@ -103,7 +103,10 @@ class ExampleRingController(
     private val assembler = Frame.Assembler()
 
     override fun onNotify(data: ByteArray) {
-        val frame = assembler.feed(data) ?: return
+        for (frame in assembler.feed(data)) handle(frame)
+    }
+
+    private fun handle(frame: Frame.Parsed) {
         when (frame.cmd) {
             Frame.BATTERY_QUERY -> frame.payload.firstOrNull()?.let { p ->
                 _status.update { it.copy(batteryPercent = p.toInt() and 0xFF) }
@@ -174,21 +177,29 @@ class ExampleRingController(
 
         fun checksum(bytes: ByteArray): Int = bytes.fold(0) { acc, b -> acc xor (b.toInt() and 0xFF) }
 
-        /** Reassembles frames that arrive split across notifications; drops frames with a bad checksum. */
+        /** Reassembles frames that arrive split across notifications (or several in one).
+         *  Returns every complete frame; drops frames with a bad checksum and resyncs on garbage. */
         class Assembler {
             private var buf = ByteArray(0)
 
-            fun feed(data: ByteArray): Parsed? {
+            fun feed(data: ByteArray): List<Parsed> {
                 buf += data
-                if (buf.isNotEmpty() && (buf[0].toInt() and 0xFF) != PREAMBLE) { buf = ByteArray(0); return null }
-                if (buf.size < 3) return null
-                val total = 3 + (buf[2].toInt() and 0xFF) + 1
-                if (buf.size < total) return null
-                val frame = buf.copyOfRange(0, total)
-                buf = buf.copyOfRange(total, buf.size)
-                val body = frame.copyOfRange(0, total - 1)
-                if (checksum(body) != (frame[total - 1].toInt() and 0xFF)) return null
-                return Parsed(frame[1].toInt() and 0xFF, frame.copyOfRange(3, total - 1))
+                val out = mutableListOf<Parsed>()
+                while (true) {
+                    val start = buf.indexOfFirst { (it.toInt() and 0xFF) == PREAMBLE }
+                    if (start < 0) { buf = ByteArray(0); break }
+                    if (start > 0) buf = buf.copyOfRange(start, buf.size)
+                    if (buf.size < 3) break
+                    val total = 3 + (buf[2].toInt() and 0xFF) + 1
+                    if (buf.size < total) break
+                    val frame = buf.copyOfRange(0, total)
+                    buf = buf.copyOfRange(total, buf.size)
+                    val body = frame.copyOfRange(0, total - 1)
+                    if (checksum(body) == (frame[total - 1].toInt() and 0xFF)) {
+                        out += Parsed(frame[1].toInt() and 0xFF, frame.copyOfRange(3, total - 1))
+                    }
+                }
+                return out
             }
         }
     }

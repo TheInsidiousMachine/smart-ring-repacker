@@ -32,6 +32,61 @@ import shutil
 HAVE_YDOTOOL = shutil.which("ydotool") is not None
 
 
+# Linux input event codes (linux/input-event-codes.h). Used for ydotool, which takes
+# raw codes ("29:1 46:1 46:0 29:0" = press ctrl, press c, release c, release ctrl),
+# and works without python-evdev installed.
+LINUX_KEYCODES = {
+    "KEY_ESC": 1, "KEY_1": 2, "KEY_2": 3, "KEY_3": 4, "KEY_4": 5, "KEY_5": 6, "KEY_6": 7,
+    "KEY_7": 8, "KEY_8": 9, "KEY_9": 10, "KEY_0": 11, "KEY_MINUS": 12, "KEY_EQUAL": 13,
+    "KEY_BACKSPACE": 14, "KEY_TAB": 15, "KEY_Q": 16, "KEY_W": 17, "KEY_E": 18, "KEY_R": 19,
+    "KEY_T": 20, "KEY_Y": 21, "KEY_U": 22, "KEY_I": 23, "KEY_O": 24, "KEY_P": 25,
+    "KEY_LEFTBRACE": 26, "KEY_RIGHTBRACE": 27, "KEY_ENTER": 28, "KEY_LEFTCTRL": 29,
+    "KEY_A": 30, "KEY_S": 31, "KEY_D": 32, "KEY_F": 33, "KEY_G": 34, "KEY_H": 35,
+    "KEY_J": 36, "KEY_K": 37, "KEY_L": 38, "KEY_SEMICOLON": 39, "KEY_APOSTROPHE": 40,
+    "KEY_GRAVE": 41, "KEY_LEFTSHIFT": 42, "KEY_BACKSLASH": 43, "KEY_Z": 44, "KEY_X": 45,
+    "KEY_C": 46, "KEY_V": 47, "KEY_B": 48, "KEY_N": 49, "KEY_M": 50, "KEY_COMMA": 51,
+    "KEY_DOT": 52, "KEY_SLASH": 53, "KEY_RIGHTSHIFT": 54, "KEY_LEFTALT": 56, "KEY_SPACE": 57,
+    "KEY_CAPSLOCK": 58, "KEY_F1": 59, "KEY_F2": 60, "KEY_F3": 61, "KEY_F4": 62, "KEY_F5": 63,
+    "KEY_F6": 64, "KEY_F7": 65, "KEY_F8": 66, "KEY_F9": 67, "KEY_F10": 68, "KEY_F11": 87,
+    "KEY_F12": 88, "KEY_RIGHTCTRL": 97, "KEY_RIGHTALT": 100, "KEY_HOME": 102, "KEY_UP": 103,
+    "KEY_PAGEUP": 104, "KEY_LEFT": 105, "KEY_RIGHT": 106, "KEY_END": 107, "KEY_DOWN": 108,
+    "KEY_PAGEDOWN": 109, "KEY_INSERT": 110, "KEY_DELETE": 111, "KEY_MUTE": 113,
+    "KEY_VOLUMEDOWN": 114, "KEY_VOLUMEUP": 115, "KEY_LEFTMETA": 125, "KEY_RIGHTMETA": 126,
+    "KEY_NEXTSONG": 163, "KEY_PLAYPAUSE": 164, "KEY_PREVIOUSSONG": 165,
+}
+
+KEY_ALIASES = {
+    "ctrl": "KEY_LEFTCTRL", "control": "KEY_LEFTCTRL", "lctrl": "KEY_LEFTCTRL",
+    "rctrl": "KEY_RIGHTCTRL", "alt": "KEY_LEFTALT", "lalt": "KEY_LEFTALT",
+    "ralt": "KEY_RIGHTALT", "shift": "KEY_LEFTSHIFT", "lshift": "KEY_LEFTSHIFT",
+    "rshift": "KEY_RIGHTSHIFT", "meta": "KEY_LEFTMETA", "super": "KEY_LEFTMETA",
+    "win": "KEY_LEFTMETA", "cmd": "KEY_LEFTMETA", "enter": "KEY_ENTER",
+    "return": "KEY_ENTER", "esc": "KEY_ESC", "escape": "KEY_ESC", "tab": "KEY_TAB",
+    "space": "KEY_SPACE", "backspace": "KEY_BACKSPACE", "delete": "KEY_DELETE",
+    "up": "KEY_UP", "down": "KEY_DOWN", "left": "KEY_LEFT", "right": "KEY_RIGHT",
+    "home": "KEY_HOME", "end": "KEY_END", "pageup": "KEY_PAGEUP",
+    "pagedown": "KEY_PAGEDOWN", "volumeup": "KEY_VOLUMEUP",
+    "volumedown": "KEY_VOLUMEDOWN", "mute": "KEY_MUTE", "playpause": "KEY_PLAYPAUSE",
+    "next": "KEY_NEXTSONG", "prev": "KEY_PREVIOUSSONG",
+}
+
+
+def key_name(part: str) -> str:
+    """'ctrl' -> 'KEY_LEFTCTRL', 'c' -> 'KEY_C', 'f5' -> 'KEY_F5'."""
+    k = part.strip().lower()
+    return KEY_ALIASES.get(k, f"KEY_{k.upper()}")
+
+
+def ydotool_key_args(combo: str):
+    """Argument list for `ydotool key` that presses the combo and releases it in reverse,
+    or None if a key is unknown. 'ctrl+c' -> ['ydotool', 'key', '29:1', '46:1', '46:0', '29:0']."""
+    parts = [p.strip() for p in combo.split("+") if p.strip()]
+    codes = [LINUX_KEYCODES.get(key_name(p)) for p in parts]
+    if not codes or any(c is None for c in codes):
+        return None
+    return ["ydotool", "key"] + [f"{c}:1" for c in codes] + [f"{c}:0" for c in reversed(codes)]
+
+
 class InputSynthesizer:
     """Dispatches key combos using evdev UInput or ydotool."""
 
@@ -59,52 +114,7 @@ class InputSynthesizer:
                 print("[bridge] WARNING: neither evdev nor ydotool is functional. Key combos will only be logged.")
 
     def _resolve_evdev_key(self, name: str):
-        k = name.strip().lower()
-        alias = {
-            "ctrl": "KEY_LEFTCTRL",
-            "control": "KEY_LEFTCTRL",
-            "lctrl": "KEY_LEFTCTRL",
-            "rctrl": "KEY_RIGHTCTRL",
-            "alt": "KEY_LEFTALT",
-            "lalt": "KEY_LEFTALT",
-            "ralt": "KEY_RIGHTALT",
-            "shift": "KEY_LEFTSHIFT",
-            "lshift": "KEY_LEFTSHIFT",
-            "rshift": "KEY_RIGHTSHIFT",
-            "meta": "KEY_LEFTMETA",
-            "super": "KEY_LEFTMETA",
-            "win": "KEY_LEFTMETA",
-            "cmd": "KEY_LEFTMETA",
-            "enter": "KEY_ENTER",
-            "return": "KEY_ENTER",
-            "esc": "KEY_ESC",
-            "escape": "KEY_ESC",
-            "tab": "KEY_TAB",
-            "space": "KEY_SPACE",
-            "backspace": "KEY_BACKSPACE",
-            "delete": "KEY_DELETE",
-            "up": "KEY_UP",
-            "down": "KEY_DOWN",
-            "left": "KEY_LEFT",
-            "right": "KEY_RIGHT",
-            "home": "KEY_HOME",
-            "end": "KEY_END",
-            "pageup": "KEY_PAGEUP",
-            "pagedown": "KEY_PAGEDOWN",
-            "volumeup": "KEY_VOLUMEUP",
-            "volumedown": "KEY_VOLUMEDOWN",
-            "mute": "KEY_MUTE",
-            "playpause": "KEY_PLAYPAUSE",
-            "next": "KEY_NEXTSONG",
-            "prev": "KEY_PREVIOUSSONG",
-        }
-        if k in alias:
-            return getattr(e, alias[k], None)
-        # Check standard key e.g. 'c' -> KEY_C
-        if len(k) == 1 and k.isalnum():
-            return getattr(e, f"KEY_{k.upper()}", None)
-        # Check direct name e.g. F1..F12
-        return getattr(e, f"KEY_{k.upper()}", None)
+        return getattr(e, key_name(name), None)
 
     def trigger_combo(self, combo: str):
         combo = combo.strip()
@@ -138,10 +148,13 @@ class InputSynthesizer:
             return
 
         if HAVE_YDOTOOL:
-            # ydotool key format e.g. 29:1 46:1 46:0 29:0
             import subprocess
+            args = ydotool_key_args(combo)
+            if args is None:
+                print(f"[bridge] error: could not map one or more keys in combo '{combo}'")
+                return
             try:
-                subprocess.run(["ydotool", "type", combo], check=False)
+                subprocess.run(args, check=False)
             except Exception as err:
                 print(f"[bridge] ydotool execution error: {err}")
             return

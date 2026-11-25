@@ -340,12 +340,6 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/testOtaAuthBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Validate OTA Handshake" />
-
-        <Button
             android:id="@+id/powerOffBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

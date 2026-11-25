@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Local HTTP & WebSocket API Server for the SmartRing.
+ * Local HTTP & WebSocket API Server for the Smart Ring Repacker app.
  * Provides authenticated control for the companion daemon, PC bridge, external scripts, and local network apps.
  */
 class RingApiServer(
@@ -63,7 +63,7 @@ class RingApiServer(
     private val studio: GestureStudio,
     private val token: String,
     private val port: Int,
-    private val lan: Boolean = true,
+    private val lan: Boolean = false,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) {
     /** Constant-time token check. */
@@ -206,7 +206,7 @@ class RingApiServer(
                         ring.setMode(mode)
                         call.respondText("""{"ok":true,"mode":"${mode.name}"}""", ContentType.Application.Json)
                     } catch (e: Exception) {
-                        call.respondText("""{"ok":false,"error":"Invalid mode: ${e.message}"}""", ContentType.Application.Json, HttpStatusCode.BadRequest)
+                        call.respondText("""{"ok":false,"error":${jsonString("Invalid mode: ${e.message}")}}""", ContentType.Application.Json, HttpStatusCode.BadRequest)
                     }
                 }
 

@@ -16,11 +16,11 @@ Never run it against hardware: nothing here talks to a phone, ring, or BLE devic
 
 | Suite | Command | What it covers | Count at release prep |
 |---|---|---|---|
-| Python | `python3 -m pytest -q tests/` | CRC and framing, command table vs live triples, feature parsers, OTA state machine round-trip against a simulator (forbidden opcodes refused), **event fixture contract** | 28 |
-| Android unit | `cd android && ./gradlew testDebugUnitTest` | `RingProtocolTest` (14), `RingApiServerTest` (6, real Ktor server on a fake ring), `RealGestureStudioTest` (5, incl. recognition on the real recordings), `PxiOtaTest` (3), `JlAuthSessionTest` (3), `LogicTest` (10), `RingAppViewModelTest` (8), `UiComposeTest` (6, Robolectric composes each screen), `ShotsTest` (1, no-op unless `SHOTS_DIR` is set), `ExampleRingControllerTest` (5, template) | 61 |
+| Python | `python3 -m pytest -q tests/` | CRC and framing, command table vs live triples, feature parsers, OTA state machine round-trip against a simulator (forbidden opcodes refused), **event fixture contract**, PC bridge key codes (ydotool/evdev) | 32 |
+| Android unit | `cd android && ./gradlew testDebugUnitTest` | `RingProtocolTest` (14), `RingApiServerTest` (6, real Ktor server on a fake ring), `RealGestureStudioTest` (5, incl. recognition on the real recordings), `PxiOtaTest` (3), `LogicTest` (10), `RingAppViewModelTest` (8), `UiComposeTest` (6, Robolectric composes each screen), `ShotsTest` (1, no-op unless `SHOTS_DIR` is set), `ExampleRingControllerTest` (6, template) | 59 |
 | Firmware host | `gcc -DHOST_TEST -O1 -Wall -Wextra -Werror -o t fw/ring_app/test_ring_app.c -lm && ./t`; `make -C fw/mouse test` | Firmware logic with mocked stock functions: touch modes, mouse, gesture detector vs the recordings, recorder, heart, keys mode. The C detector must equal the Python model. | all pass |
 | Image build | `python3 fw/ring_app/build_image.py <stock image>` | Needs the vendor image. Asserts hash, patch bytes, allowed ranges, vector table, OTA code identical, size == stock. | skipped without image |
-| Emulator | `fw/ring_app/emu/emu_gesture.py`, `emu_modes.py`, `emu_touch.py`, `emu_recorder.py` (see `emu/README.md`) | The real patched image under Unicorn with real stock timer/drain/accel code; flags any write by stock code into our RAM and any wild write by ours. | skipped without image |
+| Emulator | `fw/ring_app/emu/emu_gesture.py`, `emu_modes.py`, `emu_touch.py` (run by `check_all.sh --fw`); `emu_recorder.py` by hand (see `emu/README.md`) | The real patched image under Unicorn with real stock timer/drain/accel code; flags any write by stock code into our RAM and any wild write by ours. | skipped without image |
 
 The emulator and image-build steps are **not run in CI** (no vendor image there). Run them locally before any flash.
 

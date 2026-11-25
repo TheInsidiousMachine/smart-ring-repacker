@@ -5,8 +5,8 @@ Gestures, Mouse, Health. Screenshots are from the app running on the built-in fa
 
 | Tab | What it does |
 |---|---|
-| ![Ring](img/ring.png) **Ring** | Connect/disconnect, battery, firmware and build, clock sync, mode (Clock / Mouse / Heart), brightness 0..3, screen timeout, find ring. A status pill under the title shows Connected / Reconnecting / Disconnected on every tab. |
-| **Display** | The bump-bump-flick message: live preview of the 5-character LED display, text, preset chips, Scroll or Words, speed (Fast/Normal/Slow + slider), plays, send, play now, detector on/off, fired/armed counters, saved "show now" messages. ([screenshot](img/display.png)) |
+| ![Ring](img/ring.png) **Ring** | Connect/disconnect, battery, firmware and build, clock sync, mode (Clock / Mouse / Heart / Keys), brightness 0..3, screen timeout, find ring. A status pill under the title shows Connected / Reconnecting / Disconnected on every tab. |
+| **Display** | The bump-bump-flick message: live preview of the 5-character LED display, text, preset chips, Scroll or Words, speed (Fast/Normal/Slow + slider), plays, send, play now, detector on/off, fired/armed counters, saved "show now" messages. |
 | ![Gestures](img/gestures.png) **Gestures** | Listening switch, new gesture, per-gesture training, strictness, action editor, recognised-gesture feed, and the local API card (enable, port, LAN, token, URLs). |
 | ![Mouse](img/mouse.png) **Mouse** | Pointer (cursor follows changes in hand angle, stops when you stop) or Joystick (held tilt keeps moving); sensitivity, acceleration, invert X/Y, swap axes, right-click hold. Deadzone and recenter appear for Joystick. |
 | ![Health](img/health.png) **Health** | Heart mode switch and a live BPM readout from the ring's PPG sensor. |

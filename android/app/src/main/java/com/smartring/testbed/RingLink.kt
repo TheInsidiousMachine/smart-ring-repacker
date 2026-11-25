@@ -15,7 +15,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import com.jieli.jl_bt_ota.impl.RcspAuth
 import java.util.ArrayDeque
 import java.util.UUID
 
@@ -44,15 +43,12 @@ object RingLink {
 
     private var gatt: BluetoothGatt? = null
     private var writeChar: BluetoothGattCharacteristic? = null
-    private var otaWriteChar: BluetoothGattCharacteristic? = null
     private var pxiChar: BluetoothGattCharacteristic? = null   // ff01: stock OTA. Written ONLY by an approved PxiOtaSession.
     var ota: PxiOtaSession? = null; private set
     private var otaLastActivity = 0L
     private val assembler = RingProtocol.FrameAssembler()
     private val gestures = TapGestureClassifier()
     var session: SessionLog? = null; private set
-    private var authSession: JlAuthSession? = null
-    private val rcspAuth by lazy { RcspAuth() }
 
     private sealed class Op {
         /** noResponse: use write-without-response when the characteristic allows it (OTA data: the ring's
@@ -145,7 +141,7 @@ object RingLink {
 
     private fun teardown() {
         gatt?.disconnect(); gatt?.close(); gatt = null
-        writeChar = null; otaWriteChar = null
+        writeChar = null
         ops.clear(); busy = false; assembler.reset()
     }
 
@@ -337,7 +333,6 @@ object RingLink {
             writeChar = data?.getCharacteristic(RingProtocol.WRITE_CHAR_UUID)
             val jl = g.getService(RingProtocol.OTA_SERVICE_UUID)
             val pxi = g.getService(UUID.fromString("0000ff00-0000-1000-8000-00805f9b34fb"))
-            otaWriteChar = jl?.getCharacteristic(RingProtocol.OTA_WRITE_CHAR_UUID)
             pxiChar = pxi?.getCharacteristic(UUID.fromString("0000ff01-0000-1000-8000-00805f9b34fb"))
             log("Chip-path check: JieLi ae00=${jl != null}, PixArt-OTA ff00=${pxi != null}")
             listOfNotNull(
@@ -418,10 +413,6 @@ object RingLink {
         if (uuid == PXI_UUID) {
             log("<- [ff01] ${RingProtocol.toHex(value)}")
             ota?.let { otaLastActivity = SystemClock.uptimeMillis(); main.post { it.onNotify(value); otaTick() } }
-            return
-        }
-        if (uuid == RingProtocol.OTA_NOTIFY_CHAR_UUID && authSession?.onData(value) == true) {
-            log("<- [ae02] auth → ${authSession!!.state}${authSession!!.failure?.let { " ($it)" } ?: ""}")
             return
         }
         log("<- [${uuid.toString().substring(4, 8)}] ${RingProtocol.toHex(value)}")
@@ -519,22 +510,6 @@ object RingLink {
             if (s.state == PxiOtaSession.State.DONE || s.state == PxiOtaSession.State.FAILED) return
             if (SystemClock.uptimeMillis() - otaLastActivity > 10_000) { s.timeout(); return }
             main.postDelayed(this, 2000)
-        }
-    }
-
-    // ---------------------------------------------------------------- dev: auth compatibility check
-
-    fun startOtaAuthTest() {
-        val ch = otaWriteChar ?: return log("No JieLi ae00/ae01 service — handshake not applicable")
-        try {
-            val s = JlAuthSession({ rcspAuth.getRandomAuthData() }, { rcspAuth.getEncryptedAuthData(it) }) {
-                enqueue(Op.WriteChar(ch, it, "auth ${it.size}B"))
-            }
-            authSession = s
-            s.start()
-            main.postDelayed({ s.timeout(); s.failure?.let { log("Auth: $it") } }, 5000)
-        } catch (t: Throwable) {
-            log("RcspAuth error: ${t.message}")
         }
     }
 }

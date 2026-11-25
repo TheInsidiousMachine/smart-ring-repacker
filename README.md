@@ -1,4 +1,4 @@
-# smart-ring-repacker
+# Smart Ring Repacker
 
 Open-source Android app, local API and custom-firmware toolchain for the **SY01 smart ring** (a PixArt-based ring sold with the RWFit app).
 Replace the vendor app, turn the ring's touch pad into a programmable input device, stream its accelerometer, and build on it. Designed so other rings can be added.
@@ -38,7 +38,8 @@ Always:
 
 ## 5-minute quickstart
 
-You need an Android phone (8.0+), a SY01 ring, JDK 17 or 21 and the Android SDK (platform 35).
+You need an Android phone (8.0+) with USB or wireless debugging on, a SY01 ring, JDK 17 or 21, the Android SDK (platform 35) and `adb`
+(no Android Studio? see [BUILDING.md](docs/BUILDING.md#sdk-without-android-studio)).
 
 ```bash
 git clone https://github.com/TheInsidiousMachine/smart-ring-repacker && cd smart-ring-repacker/android
@@ -49,7 +50,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 1. Close the vendor app (RWFit); a ring talks to one app at a time. Tap the ring to wake it.
 2. Open **Ring**, grant the Bluetooth permission, tap **Connect**. The app looks for a device named `SY01`. You should see battery and firmware version.
-3. Enable the API: **Gestures** tab -> API card -> switch on, note the URL and token. Try it:
+3. Enable the API: **Gestures** tab -> API card -> switch on, turn on **LAN** (it starts local-only), note the URL and token. Your computer must be on the same Wi-Fi or VPN as the phone. Try it:
    ```bash
    curl -H "Authorization: Bearer <token>" http://<phone-ip>:8765/v1/status
    ```

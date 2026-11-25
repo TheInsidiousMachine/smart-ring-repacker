@@ -14,7 +14,7 @@ The ring's own Bluetooth HID goes to the paired device (the phone). The phone re
   ```bash
   pip install evdev
   ```
-- Optional fallback: `ydotool` (if `python-evdev` or `/dev/uinput` access is not configured).
+- Optional fallback: `ydotool` (if `python-evdev` or `/dev/uinput` access is not configured). The bridge sends real key codes (`ydotool key 29:1 46:1 46:0 29:0` for `ctrl+c`); the `ydotoold` daemon must be running.
 
 ## UInput Permissions (Recommended)
 

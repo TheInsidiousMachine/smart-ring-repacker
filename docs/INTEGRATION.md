@@ -16,7 +16,7 @@ if the copies differ, that one wins.
 ```
 
 Any ring or app that emits the events below can replace the ring side. Any consumer can use the events;
-the keyboard is just the first one. See [ADDING_A_RING.md](ADDING_A_RING.md) for new hardware.
+the keyboard is just the first one. See [ADDING_A_RING.md](https://github.com/TheInsidiousMachine/smart-ring-repacker/blob/main/docs/ADDING_A_RING.md) for new hardware.
 
 ## The contract
 
@@ -32,16 +32,18 @@ the keyboard is just the first one. See [ADDING_A_RING.md](ADDING_A_RING.md) for
    | `TAP` | Released after < 300 ms. | button **up** (commit as a tap) |
    | `HOLD_END` | Released after >= 300 ms. | button **up** (commit the glide) |
 
+   A release can arrive with no `HOLD_START` before it (the client connected mid-press, or a notification was lost). Treat it as a no-op;
+   the fixture contains one such stray `TAP`.
    Optional field `ringTick` (20 ms ring clock, wraps at 65536, firmware build 16+) is free of BLE jitter; use it for timing if present.
    Other kinds (`RIGHT_CLICK`, `FIVE_TAPS`, `LONG_HOLD`) and other events (`mode_changed`, `info`, `gesture_*`, `pc_keys`, `heart_beat`) must be ignored by the keyboard.
 5. **Fixture**: [`docs/fixtures/ring_events.jsonl`](fixtures/ring_events.jsonl) is a real-shaped sample stream. Both repos test against an identical copy.
-   Full schema: [API.md](API.md).
+   Full schema: [API.md](https://github.com/TheInsidiousMachine/smart-ring-repacker/blob/main/docs/API.md).
 
 ## Setup, end to end
 
-1. **Ring**: flash firmware build 16 or newer (see [FIRMWARE.md](FIRMWARE.md); it can brick the ring, read the warnings first).
+1. **Ring**: flash firmware build 16 or newer (see [FIRMWARE.md](https://github.com/TheInsidiousMachine/smart-ring-repacker/blob/main/docs/FIRMWARE.md); it can brick the ring, read the warnings first).
    Without custom firmware the ring sends no touch events and the keyboard has no button.
-2. **Phone**: install the app, pair the ring, open **Gestures -> API**, switch it on, choose **LAN** (so the PC/glasses host can reach it), copy the token.
+2. **Phone**: install the app, connect the ring (Ring tab -> Connect), open **Gestures -> API**, switch it on, turn on **LAN** (it starts local-only; the PC/glasses host must be on the same Wi-Fi or VPN), copy the token.
 3. **Ring mode**: set mode `KEYS` (app, or `POST /v1/mode {"mode":"KEYS"}`). KEYS mode sends touch edges only, holds a fast BLE link, and disables HID and shortcuts.
 4. **Keyboard**: open the keyboard page ([README quickstart](https://github.com/TheInsidiousMachine/gaze-keyboard#readme)), enter `ws://<phone-ip>:8765/v1/events` and the token, press connect. State shows `connected`.
 5. **Check**: press and hold the ring pad. The page should start a glide on press and commit on release.

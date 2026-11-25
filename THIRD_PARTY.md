@@ -39,8 +39,7 @@ This repository does **not** contain, and you must not commit:
 
 - the vendor Android app (RWFit, `com.rw.revivalfit`) or any decompiled source of it (`rwfit_apk/` is git-ignored);
 - vendor firmware images (`firmware/*.bin`) or images built from them;
-- the vendor's native library `libjl_ota_auth.so` (JieLi RCSP auth). The class `com.jieli.jl_bt_ota.impl.RcspAuth` is only a small JNI binding that must carry the vendor's class name;
-  it is inert without a library you supply yourself, and the SY01 does not need it.
+- any vendor native library (for example JieLi's `libjl_ota_auth.so`); the SY01 does not use one and this repo has no code that loads one.
 
 Protocol facts, command identifiers and firmware addresses in `docs/` and `command_table.py` / `CommandTable.kt` were derived by analysing those artifacts for
 interoperability with a ring the author owns. No vendor code or data files are reproduced. Names such as RWFit, PixArt, JieLi, LinkedSemi, Colmi and SY01 belong to their owners;

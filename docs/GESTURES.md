@@ -32,7 +32,7 @@ sequences fire 0 times. **Unverified:** real-world false-trigger rate (only ~40 
 real shaking (no recordings).
 
 The message: `POST /v1/message` or the Display tab. Words mode shows each word (long words split in 5s); scroll mode shows a marquee,
-one character per step, up to 32 steps. 60..1500 ms per step, 1..5 plays. The default built-in message is a profane two-word phrase (blank text = built-in);
+one character per step, up to 32 steps. 60..1500 ms per step, 1..5 plays. Blank text plays the firmware's built-in message ("HI THERE" in firmware built from this source);
 set your own.
 
 ## Gesture Studio (on the phone)

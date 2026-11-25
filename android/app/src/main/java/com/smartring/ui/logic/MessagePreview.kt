@@ -6,12 +6,12 @@ import com.smartring.core.GestureMessage
  * What the ring's 5-character window shows for a message.
  *
  * [protocolFrames] is a copy of `RingProtocol.messageFrames` (frozen, not imported here).
- * A blank gesture message uploads zero frames. Build 14 plays that as "HI THERE"
+ * A blank gesture message uploads zero frames. Firmware built from this source plays that as "HI THERE"
  * scrolling once. Keep [protocolFrames] in lockstep with the protocol function.
  */
 object MessagePreview {
     const val MAX_FRAMES = 32
-    /** What a blank message plays on build 14: one scroll of the built-in text. */
+    /** What a blank message plays (firmware from this source): one scroll of the built-in text. */
     val BUILTIN = protocolFrames("HI THERE", scroll = true)
 
     fun protocolFrames(text: String, scroll: Boolean): List<String> {

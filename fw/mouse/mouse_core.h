@@ -3,7 +3,10 @@
  * Pure logic, no hardware access, integer math only (Cortex-M0 friendly).
  * Same file is built for the host unit tests and for the ring.
  *
- * Behavior (see docs/MOUSE_PROPOSAL.md):
+ * Earlier standalone design, kept with its host tests; the mouse that ships in the ring image
+ * lives in fw/ring_app/ring_app.c (tilt pointer/joystick, see docs/FIRMWARE.md).
+ *
+ * Behavior of this core:
  *   - mouse mode off            -> nothing is ever emitted
  *   - touch held >= hold_ms     -> "steering": hand motion moves the cursor
  *                                  relative to where it is; release stops it

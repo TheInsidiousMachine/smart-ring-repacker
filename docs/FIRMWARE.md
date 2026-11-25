@@ -42,10 +42,10 @@ Known-good image: ring model `30330000`, V2.1.4, **174,952 bytes**, SHA-256
 Check it: `cd firmware && sha256sum -c SY01_30330000_V2.1.4_stock.bin.sha256`.
 
 How the official app gets it (so you can obtain it for **your own ring** through **your own account/app**): RWFit asks the vendor server for an update with a
-`getOtaUpgradeInfo` request and downloads the `.bin` named in the reply from the vendor CDN (host `cdn.ruiwo168.com`, path `ota/30330000/`). With your phone in USB or wireless debugging,
+`getOtaUpgradeInfo` request and downloads the `.bin` named in the reply. With your phone in USB or wireless debugging,
 `tools/capture_fw_url.sh` passively records `adb logcat` while **you** open RWFit -> Device -> Firmware update (do **not** press update) and prints the matching
 log lines (URL, version). The script sends nothing to the ring. Then download that file yourself and verify the hash. If your ring reports a different version or model, you have a
-different image: the builder and the app will refuse it. We do not host the file and we do not provide the CDN URL for your device.
+different image: the builder and the app will refuse it. We do not host the file or link to it.
 
 ## Build
 
@@ -67,9 +67,11 @@ See [TESTING.md](TESTING.md). Without your image the host tests still run and th
 
 The app only ever sends images through `PxiOtaSession` (stock OTA protocol on `ff01`), and several independent gates stand in the way:
 
-1. **Hash allowlist.** `PxiOtaSession.ALLOWED_SHA256` (`testbed/PxiOta.kt`) lists the exact images that may be sent: stock V2.1.4 and our builds 9-16. `RingLink.startFirmwareUpdate` refuses anything else.
-   Your own build only appears in the picker if its hash is listed. Builds are reproducible only with the same toolchain; **if your hash differs, the app will not flash it** until you
-   add your hash to the allowlist yourself (a deliberate act: do it only after the rollback checklist for that exact image).
+1. **Hash allowlist.** `PxiOtaSession.ALLOWED_SHA256` (`testbed/PxiOta.kt`) lists the exact images that may be sent: stock V2.1.4 and the author's builds 9-13, 15 and 16
+   (build 14 was withdrawn). `RingLink.startFirmwareUpdate` refuses anything else.
+   **An image you build from this source will not match any listed hash**: the source differs from the author's builds (for example the built-in message), and toolchains differ.
+   To flash it you must add its hash (printed by `build_image.py`) to the allowlist yourself and rebuild the app. That is deliberate: do it by hand, only after the
+   [rollback checklist](OTA_ROLLBACK_CHECKLIST.md) for that exact image. Agents and scripts never add hashes.
 2. **Staging.** Copy the `.bin` files (your custom build **and** the stock image, which is your way back) into the app's files dir on the phone:
    `Android/data/com.smartring.testbed/files/firmware/` (e.g. `adb push`).
 3. **Developer mode -> Ring tab -> Firmware**: pick the image; the dropdown shows name and first 8 hash characters.
@@ -85,7 +87,8 @@ Rule for any image: keep the stock OTA code path byte-identical so the next upda
 | Situation | Status |
 |---|---|
 | Transfer aborts or the link drops before verify | **Expected** (inference from the OTA code, not tested by interrupting): the update writes the other slot, the running image is untouched. |
-| Ring verifies, resets, image boots, BLE works | **Demonstrated live** for stock V2.1.4 (re-flash round trip) and for custom builds up to 14, including updating from one custom build to the next over the same OTA path. Flashing stock *back from* a custom build is expected to work the same way but was not separately recorded. Builds 15 and 16: host tests and emulator only in our records. |
+| Ring verifies, resets, image boots, BLE works | **Demonstrated live** for stock V2.1.4 (re-flash round trip) and for custom builds up to 13, including updating from one custom build to the next over the same OTA path. Flashing stock *back from* a custom build is expected to work the same way but was not separately recorded. Builds 15 and 16: host tests and emulator only in our records. |
+| Image boots, then the link fails in use | **Happened once (build 14).** A wrong RAM address made the link slow down and stop delivering data after ~19 s in mouse mode, while the connection stayed up. The build was withdrawn. How the ring was brought back to a good build is **not recorded**; we assume a reboot cleared the RAM state, since the bad write only happens in mouse mode, but that is an inference. Build 15 added an emulator guard that fails build 14. |
 | Image boots but BLE/OTA is broken | **Not recoverable by us.** You would need physical access (SWD or similar) and nobody has shown that route. |
 | Image hard-faults at boot | **Unknown.** Whether the ROM falls back to the old slot has not been tested. |
 | Integrity | 16-bit additive sum only, no signature. |

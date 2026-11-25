@@ -74,7 +74,7 @@ enum class TouchKind { TAP, HOLD_START, HOLD_END, RIGHT_CLICK, FIVE_TAPS, LONG_H
 class MotionBatch(val seq: Int, val samples: List<IntArray>, val receivedAtMs: Long)
 
 /** Message the ring plays on bump-bump-flick. Blank text = the firmware's built-in message
- * (build 14+: "HI THERE" scrolling once; older builds flash a two-word phrase twice). */
+ * ("HI THERE" scrolling once, in firmware built from this source). */
 data class GestureMessage(
     val text: String = "HI THERE",
     val scroll: Boolean = true,

@@ -466,7 +466,7 @@ int main(void)
         CHECK(strstr("    HI THERE    ", shown) != NULL && strlen(shown) == 5, "message not drawn: '%s'", shown);
         const char *neg[] = { "bumps_only", "flick_only", "everyday", "multiflick" };
         for (int k = 0; k < 4; k++) { int n = replay(neg[k]); printf("%s: %d fired (%d armed)\n", neg[k], n, n_armed); CHECK(n == 0, "%s fired %d", neg[k], n); }
-        /* built-in message (build 14): "HI THERE" scrolls once, 160 ms per step, then the screen is released */
+        /* built-in message: "HI THERE" scrolls once, 160 ms per step, then the screen is released */
         uint8_t t[] = { 0xAB, 1, 0, 3, 0, 0, 0x7A, 0x06, 0x00 }; hook_cmd(t, sizeof t);
         CHECK(strcmp(shown, "    H") == 0 && ui_idle == 0, "test fire: '%s'", shown);
         int b0 = draws_blocked; m_draw("12:00", 1); CHECK(draws_blocked == b0 + 1, "stock draw must be blocked during the message");

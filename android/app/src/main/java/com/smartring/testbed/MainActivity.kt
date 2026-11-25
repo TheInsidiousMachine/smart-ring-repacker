@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity(), RingLink.Listener {
         bind(R.id.countOnBtn, "counter mode on") { RingProtocol.setCountMode(true) }
         bind(R.id.countOffBtn, "counter mode off") { RingProtocol.setCountMode(false) }
 
-        findViewById<Button>(R.id.testOtaAuthBtn).setOnClickListener { RingLink.startOtaAuthTest() }
         findViewById<Button>(R.id.firmwareUpdateBtn).setOnClickListener { confirmFirmwareUpdate() }
         findViewById<Button>(R.id.powerOffBtn).setOnClickListener {
             android.app.AlertDialog.Builder(this)

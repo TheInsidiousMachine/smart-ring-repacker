@@ -73,6 +73,15 @@ class ExampleRingControllerTest {
         assertEquals(55, ring.status.value.batteryPercent)
     }
 
+    @Test fun severalFramesInOneNotificationAndLeadingGarbage() {
+        val t = FakeTransport()
+        val ring = ExampleRingController(t)
+        val a = frame(ExampleRingController.Frame.BATTERY_QUERY, 40)
+        val b = frame(ExampleRingController.Frame.BATTERY_QUERY, 41)
+        t.simulateNotify(byteArrayOf(0x01, 0x02) + a + b)                // junk, then two frames at once
+        assertEquals(41, ring.status.value.batteryPercent)                 // both parsed, last wins
+    }
+
     @Test fun reconnectsAfterUnexpectedDropButNotAfterDisconnect() {
         val t = FakeTransport()
         val ring = ExampleRingController(t)

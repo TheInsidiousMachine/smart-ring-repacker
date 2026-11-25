@@ -59,7 +59,7 @@ data class ApiSettings(
     /** Bearer token required by every API call; generated on first enable. */
     val token: String = "",
     /** Bind to all interfaces (reachable from the LAN / VPN) instead of localhost only. */
-    val lan: Boolean = true,
+    val lan: Boolean = false,   // off = this phone only; on = every network the phone is on
 )
 
 data class ApiStatus(val running: Boolean, val urls: List<String>, val clients: Int, val error: String? = null)

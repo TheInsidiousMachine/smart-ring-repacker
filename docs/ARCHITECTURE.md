@@ -22,7 +22,7 @@
  |   testbed/RingLink  (single shared BLE link: scan, GATT queue, notify, reconnect, OTA, logs)  |
  |              |                                                                               |
  |   testbed/RingProtocol (framing, CRC-16/ARC, builders, FrameAssembler, classify)             |
- |   testbed/PxiOta (stock OTA client)   JlAuthSession + RcspAuth (optional probe)               |
+ |   testbed/PxiOta (stock OTA client, hash allowlist)                                          |
  +----------------|-----------------------------------------------------------------------------+
                   | BLE: service a00a (write b002 / notify b003); ff00/ff01 only for OTA
                   v
@@ -31,7 +31,7 @@
  |  + fw/ring_app patch layer (touch, modes, accel ~99 Hz, gestures, tilt mouse, heart, keys)       |
  +--------------------------------------------------------------------------------------------------+
 
- Outside the app:   pc/ring_bridge.py --ws--> /v1/events (pc_keys -> uinput/ydotool)
+ Outside the app:   pc/ring_bridge.py --ws--> /v1/events (pc_keys -> uinput, or `ydotool key`)
                     other apps (gaze keyboard) --ws--> /v1/events (touch HOLD_START/TAP/HOLD_END)
 ```
 
@@ -47,11 +47,10 @@ Data flow for motion: `setMotionStreaming(true)` -> `7A 04` -> ring streams `7A 
 | Package / path | Role |
 |---|---|
 | `core/` | The contracts: `RingController`, `GestureStudio`, data classes, `FakeRingController`, `FakeGestureStudio`, `RingServices` (where the UI gets its instances), `example/` (template for new rings) |
-| `testbed/` | SY01-specific BLE and protocol: `RingLink`, `RealRingController`, `RingProtocol`, `CommandTable`, `PxiOta`, `JlAuthSession`, `SessionLog`, the app class `RingApplication` that wires real implementations, and the original Views screens (`HomeActivity`, `MainActivity`) |
+| `testbed/` | SY01-specific BLE and protocol: `RingLink`, `RealRingController`, `RingProtocol`, `CommandTable`, `PxiOta`, `SessionLog`, the app class `RingApplication` that wires real implementations, and the original Views screens (`HomeActivity`, `MainActivity`) |
 | `ui/` | Compose app: `RingApp` (nav), `vm/RingAppViewModel`, `screens/`, `components/`, `logic/` (pure helpers, tested), `prefs/`, `theme/` |
 | `gestures/` | Phone-side gesture engine and actions; pure JVM, no Android classes except `AndroidPlatformActions` |
 | `api/` | `RingApiServer`: bearer-token HTTP + WebSocket |
-| `com.jieli.jl_bt_ota.impl.RcspAuth` | JNI binding that must keep the vendor's class name; needs a user-supplied library; unused on the SY01 |
 
 ### Invariants
 

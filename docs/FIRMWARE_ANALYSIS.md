@@ -252,8 +252,8 @@ what the pointer and joystick modes use. Turning the hand flat about the vertica
 - The vendor app sets its `isJLPlatform` flag for `ae00` **or** Telink **or** `ff00` services, so the flag does not mean a JieLi chip.
 - The app requests MTU 185 only on the `ff00`/Telink branch; a JieLi-only device gets 509. Live: MTU 185 and notify on `ff01`, no `ae00` (confirmed live).
 - The Bluetooth company id in the bond record is `0x093A` (LinkedSemi); JieLi would be `0x05D6`.
-- Consequence: the JieLi RCSP auth handshake (and the vendor native library that implements it) is **not used** with this ring. Our code keeps a small
-  optional compatibility probe (`JlAuthSession`, `RcspAuth`); it needs a vendor library that is not shipped here (see THIRD_PARTY.md) and does nothing on an SY01.
+- Consequence: the JieLi RCSP auth handshake (and the vendor native library that implements it) is **not used** with this ring, and this repo contains no code for it.
+  The app only logs whether an `ae00` service exists (`Chip-path check` line) as a sanity check.
 
 ## Public recovery research (all unverified for this ring)
 

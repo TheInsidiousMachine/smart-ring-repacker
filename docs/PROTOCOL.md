@@ -101,7 +101,7 @@ Payload layouts for step/sleep/heart-rate/SpO2 history blocks are transcribed in
 
 ## Custom command group `0x7A` (our firmware only)
 
-Stock firmware never uses group `0x7A` and ignores it. Our firmware (`fw/ring_app/ring_app.c`, builds 9 to 16) handles every `0x7A`
+Stock firmware never uses group `0x7A` and ignores it. Our firmware (`fw/ring_app/ring_app.c`, our custom builds) handles every `0x7A`
 frame itself and never forwards it to the stock command processor. Frames use the normal framing above, `keyFlag = 0`.
 
 ### Commands (phone -> ring)
